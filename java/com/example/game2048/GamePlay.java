@@ -20,7 +20,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     private TextView textScore, textHighScore;
 
     private int score = 0, highScore = 0;
-
+    private boolean won = false;
     private int[][] boxPrevious = new int[4][4];
     private int[][] box = new int[4][4];
 
@@ -124,9 +124,10 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         if(highScore < score) highScore = score;
         textHighScore.setText(String.valueOf(highScore));
 
-        if(winGame()){
+        if(winGame() && !won){
             WinGameDialog winGameDialog = new WinGameDialog();
             winGameDialog.show(getSupportFragmentManager(), "VICTORY");
+            won = true;
         }
 
         if(endGame()){
