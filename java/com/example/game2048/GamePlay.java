@@ -1,5 +1,6 @@
 package com.example.game2048;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.MotionEvent;
@@ -15,7 +16,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GamePlay extends AppCompatActivity implements View.OnClickListener {
-    private Button undo;
+    private Button undo, home, reset;
+    private TextView textScore, textHighScore;
+
+    private int score = 0, highScore = 0;
 
     private int[][] boxPrevious = new int[4][4];
     private int[][] box = new int[4][4];
@@ -35,11 +39,13 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         connectView();
 
         startGame();
+
 //        demoCheckSwipe();
 //        demoStuckSwipeDown();
 //        demoEndGame();
+//        demoWinGame();
 
-        undo.setOnClickListener(this);
+        setClickButton();
         DetectGesture detectGesture = new DetectGesture();
         detectGesture.setActivity(this);
 
@@ -63,7 +69,19 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         textView[3][1] = findViewById(R.id.box31);
         textView[3][2] = findViewById(R.id.box32);
         textView[3][3] = findViewById(R.id.box33);
+
         undo = findViewById(R.id.undo);
+        home = findViewById(R.id.home);
+        reset = findViewById(R.id.reset);
+
+        textScore = findViewById(R.id.score);
+        textHighScore = findViewById(R.id.highScore);
+    }
+
+    private void setClickButton(){
+        undo.setOnClickListener(this);
+        home.setOnClickListener(this);
+        reset.setOnClickListener(this);
     }
 
     private void startGame() {
@@ -100,6 +118,15 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
                 if(box[i][j] != 0) textView[i][j].setText(String.valueOf(box[i][j]));
                 else textView[i][j].setText("");
             }
+        }
+
+        textScore.setText(String.valueOf(score));
+        if(highScore < score) highScore = score;
+        textHighScore.setText(String.valueOf(highScore));
+
+        if(winGame()){
+            WinGameDialog winGameDialog = new WinGameDialog();
+            winGameDialog.show(getSupportFragmentManager(), "VICTORY");
         }
 
         if(endGame()){
@@ -152,6 +179,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 1; j < clone.size(); j++) {
                 if(clone.get(j - 1).equals(clone.get(j))) {
                     clone.set(j - 1, clone.get(j) * 2);
+                    score += clone.get(j) * 2;
                     clone.remove(j);
                 }
             }
@@ -204,6 +232,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 1; j < clone.size(); j++) {
                 if(clone.get(j - 1).equals(clone.get(j))) {
                     clone.set(j - 1, clone.get(j) * 2);
+                    score += clone.get(j) * 2;
                     clone.remove(j);
                 }
             }
@@ -256,6 +285,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(i = 1; i < clone.size(); i++) {
                 if(clone.get(i - 1).equals(clone.get(i))) {
                     clone.set(i - 1, clone.get(i) * 2);
+                    score += clone.get(i) * 2;
                     clone.remove(i);
                 }
             }
@@ -308,6 +338,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(i = 1; i < clone.size(); i++) {
                 if(clone.get(i - 1).equals(clone.get(i))) {
                     clone.set(i - 1, clone.get(i) * 2);
+                    score += clone.get(i) * 2;
                     clone.remove(i);
                 }
             }
@@ -396,6 +427,13 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         display();
     }
 
+    private void demoWinGame(){
+        startGame();
+        box[3][3] = 2048;
+
+        display();
+    }
+
     private boolean endGame(){
         int i, j;
         for(i = 0; i < 4; i++){
@@ -433,6 +471,14 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         return true;
     }
 
+    private boolean winGame(){
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++) if(box[i][j] == 2048) return true;
+        }
+
+        return false;
+    }
+
     // set event in this activity
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -449,6 +495,15 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
                 }
             }
             display();
+        }
+
+        if(v == reset) {
+            startGame();
+        }
+
+        if(v == home){
+            Intent intent = new Intent(GamePlay.this, MainActivity.class);
+            startActivity(intent);
         }
     }
 }
