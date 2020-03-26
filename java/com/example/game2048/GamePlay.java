@@ -3,11 +3,11 @@ package com.example.game2048;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
@@ -38,7 +38,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_gameplay);
         connectView();
 
-        startGame();
+//        startGame();
+        demoColorAndSize();
 
 //        demoCheckSwipe();
 //        demoStuckSwipeDown();
@@ -115,8 +116,16 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     private void display() {
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
-                if(box[i][j] != 0) textView[i][j].setText(String.valueOf(box[i][j]));
-                else textView[i][j].setText("");
+                if(box[i][j] != 0){
+                    textView[i][j].setText(String.valueOf(box[i][j]));
+
+                    setColor(box[i][j] % 2048, i, j);
+                    setTextSize(box[i][j], i, j);
+                } else {
+                    textView[i][j].setText("");
+                    textView[i][j].setTextColor(getResources().getColor(R.color.background_default));
+                    textView[i][j].setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.box_size_small));
+                }
             }
         }
 
@@ -135,6 +144,65 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             endGameDialog.show(getSupportFragmentManager(), "DO IT!");
         }
 
+    }
+
+    private void setColor(int n, int i, int j) {
+        switch (n) {
+            case 2: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num2));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num2));
+            } break;
+            case 4: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num4));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num4));
+            } break;
+            case 8: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num8));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num8));
+            } break;
+            case 16: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num16));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num16));
+            } break;
+            case 32: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num32));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num32));
+            } break;
+            case 64: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num64));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num64));
+            } break;
+            case 128: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num128));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num128));
+            } break;
+            case 256: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num256));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num256));
+            } break;
+            case 512: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num512));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num512));
+            } break;
+            case 1024: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num1024));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num1024));
+            } break;
+            case 0: {
+                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num2048));
+                textView[i][j].setTextColor(getResources().getColor(R.color.num2048));
+            }
+        }
+    }
+
+    private void setTextSize(int n, int i, int j) {
+//        default setTextSize's unit is px, use TypedValue.COMPLEX_UNIT_PX to convert unit of values in dimens to px
+        if(n >= 1000 && n < 10000)
+            textView[i][j].setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.box_size_medium));
+        else if(n >= 10000)
+            textView[i][j].setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.box_size_large));
+        else
+            textView[i][j].setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.box_size_small));
     }
 
     private int ranValue() {
@@ -435,6 +503,15 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         display();
     }
 
+    private void demoColorAndSize(){
+        startGame();
+
+        box[2][2] = 4096;
+        box[1][1] = 262144;
+        box[1][2] = 2097152;
+        display();
+    }
+
     private boolean endGame(){
         int i, j;
         for(i = 0; i < 4; i++){
@@ -474,7 +551,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
 
     private boolean winGame(){
         for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++) if(box[i][j] == 2048) return true;
+            for(int j = 0; j < 4; j++) if(box[i][j] >= 2048) return true;
         }
 
         return false;
