@@ -32,21 +32,24 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     private ArrayList<Integer> arrayY = new ArrayList<>();
     private ArrayList<Integer> clone = new ArrayList();
 
+    private Database db = new Database(this);
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
         connectView();
+        setClickButton();
 
-//        startGame();
-        demoColorAndSize();
+        startGame();
+
+//        demoColorAndSize();
 
 //        demoCheckSwipe();
 //        demoStuckSwipeDown();
 //        demoEndGame();
 //        demoWinGame();
 
-        setClickButton();
         DetectGesture detectGesture = new DetectGesture();
         detectGesture.setActivity(this);
 
@@ -85,7 +88,25 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         reset.setOnClickListener(this);
     }
 
+    private void getScore(){
+        if(db.getScore() != null) {
+            score = db.getScore()[0];
+            highScore = db.getScore()[1];
+        }
+    }
+
     private void startGame() {
+        if(db.getBox() != null) {
+            getScore();
+            box = db.getBox();
+            display();
+        } else resetGame();
+    }
+
+    private void resetGame() {
+        getScore();
+        score = 0;
+
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
                 box[i][j] = 0;
@@ -110,10 +131,12 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
                 boxPrevious[i][j] = box[i][j];
             }
         }
+
         display();
     }
 
     private void display() {
+//        Display box
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
                 if(box[i][j] != 0){
@@ -129,16 +152,19 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             }
         }
 
+//        Score and HighScore
         textScore.setText(String.valueOf(score));
         if(highScore < score) highScore = score;
         textHighScore.setText(String.valueOf(highScore));
 
+//        Check win game
         if(winGame() && !won){
             WinGameDialog winGameDialog = new WinGameDialog();
             winGameDialog.show(getSupportFragmentManager(), "VICTORY");
             won = true;
         }
 
+//        Check lost game
         if(endGame()){
             EndGameDialog endGameDialog = new EndGameDialog();
             endGameDialog.show(getSupportFragmentManager(), "DO IT!");
@@ -497,14 +523,14 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void demoWinGame(){
-        startGame();
+        resetGame();
         box[3][3] = 2048;
 
         display();
     }
 
     private void demoColorAndSize(){
-        startGame();
+        resetGame();
 
         box[2][2] = 4096;
         box[1][1] = 262144;
@@ -576,11 +602,12 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         }
 
         if(v == reset) {
-            startGame();
+            resetGame();
         }
 
         if(v == home){
             Intent intent = new Intent(GamePlay.this, MainActivity.class);
+            db.insertData(score, highScore, box);
             startActivity(intent);
         }
     }

@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button buttonPlay, buttonHow;
+    private Button buttonPlay, buttonAbout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,19 +21,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void connectView(){
         buttonPlay = findViewById(R.id.buttonPlay);
-        buttonHow = findViewById(R.id.buttonHow);
+        buttonAbout = findViewById(R.id.buttonHow);
     }
 
     private void listenButton(){
         buttonPlay.setOnClickListener(this);
-        buttonHow.setOnClickListener(this);
+        buttonAbout.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.buttonPlay){
+        if(v == buttonPlay){
 //            Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(MainActivity.this, GamePlay.class);
+            startActivity(intent);
+        }
+        if(v == buttonAbout) {
+            Intent intent = new Intent(MainActivity.this, AboutUsActivity.class);
             startActivity(intent);
         }
     }
