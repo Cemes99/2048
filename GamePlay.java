@@ -104,7 +104,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
 
     public void startGame() {
         if(db.getBox() != null && !onDemo) {
-            getScore();
+            score = db.getScore()[0];
+            highScore = db.getScore()[1];
             scorePrevious = score;
 
             box = db.getBox();
