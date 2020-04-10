@@ -19,7 +19,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     private Button undo, home, reset;
     private TextView textScore, textHighScore;
 
-    private int score = 0, highScore = 0;
+    private int score = 0, highScore = 0, scorePrevious = 0;
     private boolean won = false;
     private int[][] boxPrevious = new int[4][4];
     private int[][] box = new int[4][4];
@@ -45,8 +45,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
 
 //        demoColorAndSize();
 
-//        demoCheckSwipe();
-//        demoStuckSwipeDown();
+//        demoSwipe();
+//        demoStuck();
 //        demoEndGame();
 //        demoWinGame();
 
@@ -97,21 +97,28 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     private void getScore(){
         if(db.getScore() != null) {
             score = db.getScore()[0];
-            highScore = db.getScore()[1];
+            if(db.getScore()[1] < score) highScore = score;
+            else highScore = db.getScore()[1];
         }
     }
 
-    private void startGame() {
+    public void startGame() {
         if(db.getBox() != null) {
             getScore();
+            scorePrevious = score;
+
             box = db.getBox();
+            boxPrevious = box;
+
             display();
         } else resetGame();
     }
 
-    private void resetGame() {
+    public void resetGame() {
+        db.insertData(score, highScore, box);
         getScore();
         score = 0;
+        scorePrevious = 0;
 
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
@@ -132,11 +139,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             }
         } while(true);
 
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                boxPrevious[i][j] = box[i][j];
-            }
-        }
+        boxPrevious = box;
 
         display();
     }
@@ -272,6 +275,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 0; j < 4; j++) temp[i][j] = box[i][j];
         }
 
+        int score_temp = score;
+
         for(i = 0; i < 4; i++) {
             for(j = 0; j < 4; j++) {
                 if(temp[i][j] != 0) clone.add(temp[i][j]);
@@ -280,11 +285,10 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 1; j < clone.size(); j++) {
                 if(clone.get(j - 1).equals(clone.get(j))) {
                     clone.set(j - 1, clone.get(j) * 2);
-                    score += clone.get(j) * 2;
+                    score_temp += clone.get(j) * 2;
                     clone.remove(j);
                 }
             }
-
             for(j = 0; j < 4; j++) {
                 if(j < clone.size()) temp[i][j] = clone.get(j);
                 else temp[i][j] = 0;
@@ -303,12 +307,11 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         }
 
         if(canMove) {
-            for(i = 0; i < 4; i++){
-                for(j = 0; j < 4; j++){
-                    boxPrevious[i][j] = box[i][j];
-                    box[i][j] = temp[i][j];
-                }
-            }
+            scorePrevious = score;
+            score = score_temp;
+
+            boxPrevious = box;
+            box = temp;
 
             addValue();
             display();
@@ -325,6 +328,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 0; j < 4; j++) temp[i][j] = box[i][j];
         }
 
+        int score_temp = score;
+
         for(i = 0; i < 4; i++) {
             for(j = 3; j >= 0; j--) {
                 if(temp[i][j] != 0) clone.add(temp[i][j]);
@@ -333,7 +338,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 1; j < clone.size(); j++) {
                 if(clone.get(j - 1).equals(clone.get(j))) {
                     clone.set(j - 1, clone.get(j) * 2);
-                    score += clone.get(j) * 2;
+                    score_temp += clone.get(j) * 2;
                     clone.remove(j);
                 }
             }
@@ -356,12 +361,11 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         }
 
         if(canMove) {
-            for(i = 0; i < 4; i++){
-                for(j = 0; j < 4; j++){
-                    boxPrevious[i][j] = box[i][j];
-                    box[i][j] = temp[i][j];
-                }
-            }
+            scorePrevious = score;
+            score = score_temp;
+
+            boxPrevious = box;
+            box = temp;
 
             addValue();
             display();
@@ -378,6 +382,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 0; j < 4; j++) temp[i][j] = box[i][j];
         }
 
+        int score_temp = score;
+
         for(j = 0; j < 4; j++) {
             for(i = 3; i >= 0; i--){
                 if(temp[i][j] != 0) clone.add(temp[i][j]);
@@ -386,7 +392,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(i = 1; i < clone.size(); i++) {
                 if(clone.get(i - 1).equals(clone.get(i))) {
                     clone.set(i - 1, clone.get(i) * 2);
-                    score += clone.get(i) * 2;
+                    score_temp += clone.get(i) * 2;
                     clone.remove(i);
                 }
             }
@@ -409,12 +415,11 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         }
 
         if(canMove) {
-            for(i = 0; i < 4; i++){
-                for(j = 0; j < 4; j++){
-                    boxPrevious[i][j] = box[i][j];
-                    box[i][j] = temp[i][j];
-                }
-            }
+            scorePrevious = score;
+            score = score_temp;
+
+            boxPrevious = box;
+            box = temp;
 
             addValue();
             display();
@@ -431,6 +436,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(j = 0; j < 4; j++) temp[i][j] = box[i][j];
         }
 
+        int score_temp = score;
+
         for(j = 0; j < 4; j++) {
             for(i = 0; i < 4; i++){
                 if(temp[i][j] != 0) clone.add(temp[i][j]);
@@ -439,7 +446,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             for(i = 1; i < clone.size(); i++) {
                 if(clone.get(i - 1).equals(clone.get(i))) {
                     clone.set(i - 1, clone.get(i) * 2);
-                    score += clone.get(i) * 2;
+                    score_temp += clone.get(i) * 2;
                     clone.remove(i);
                 }
             }
@@ -457,20 +464,18 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         }
 
         if(canMove) {
-            for(i = 0; i < 4; i++){
-                for(j = 0; j < 4; j++){
-                    boxPrevious[i][j] = box[i][j];
-                    box[i][j] = temp[i][j];
-                }
-            }
+            scorePrevious = score;
+            score = score_temp;
 
-            seekEmpty();
+            boxPrevious = box;
+            box = temp;
+
             addValue();
             display();
         }
     }
 
-    private void demoCheckSwipe() {
+    private void demoSwipe() {
         int[][] demo = new int[4][4];
         int i, j;
         for(i = 0; i < 4; i++){
@@ -489,14 +494,14 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         display();
     }
 
-    private void demoStuckSwipeDown(){
+    private void demoStuck(){
         int[][] demo = new int[4][4];
         int i, j;
         for(i = 0; i < 4; i++){
             for(j = 0; j < 4; j++) demo[i][j] = 0;
         }
 
-        demo[3][0] = 2;
+        demo[3][0] = 4;
         demo[3][1] = 2;
         demo[3][2] = 4;
         demo[3][3] = 8;
@@ -507,7 +512,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         display();
     }
 
-    private void demoEndGame(){
+    private void demoEndGame() {
         int[][] demo = new int[4][4];
         int i, j;
         for(i = 0; i < 4; i++) {
@@ -522,7 +527,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
             }
         }
 
-        for(i = 0; i < 4; i++){
+        for(i = 0; i < 4; i++) {
             for(j = 0; j < 4; j++) box[i][j] = demo[i][j];
         }
         display();
@@ -599,11 +604,8 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         if(v == undo) {
-            for(int i = 0; i < 4; i++){
-                for(int j = 0; j < 4; j++){
-                    box[i][j] = boxPrevious[i][j];
-                }
-            }
+            box = boxPrevious;
+            score = scorePrevious;
             display();
         }
 
