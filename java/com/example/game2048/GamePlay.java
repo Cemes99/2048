@@ -56,6 +56,12 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
         gestureDetectorCompat = new GestureDetectorCompat(this, detectGesture);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        db.insertData(score, highScore, box);
+    }
+
     private void connectView() {
         textView[0][0] = findViewById(R.id.box00);
         textView[0][1] = findViewById(R.id.box01);
