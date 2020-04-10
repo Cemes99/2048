@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorTextScore">#B3FFB400</color>
+    <color name="colorScore">#68590F</color>
+    <color name="back">#4B3838</color>
+    <color name="white">#FFFFFF</color>
+    <color name="border">#443E05</color>
+
+    <color name="num2">#000000</color>
+    <color name="num4">#000000</color>
+    <color name="num8">#000000</color>
+    <color name="num16">#000000</color>
+    <color name="num32">#000000</color>
+    <color name="num64">#000000</color>
+    <color name="num128">#000000</color>
+    <color name="num256">#000000</color>
+    <color name="num512">#000000</color>
+    <color name="num1024">#000000</color>
+    <color name="num2048">#000000</color>
+</resources>
