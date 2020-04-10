@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 public class EndGameDialog extends DialogFragment {
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -19,8 +20,7 @@ public class EndGameDialog extends DialogFragment {
         builder.setMessage("Ah! You lost")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(getContext(), MainActivity.class);
-                        startActivity(intent);
+
                     }
                 });
 

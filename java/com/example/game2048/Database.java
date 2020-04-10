@@ -53,6 +53,17 @@ public class Database extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void insertHighScore(int highScore){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValuesScore = new ContentValues();
+
+        contentValuesScore.put(HIGH_SCORE, highScore);
+
+        db.insert(TABLE_SCORE, null, contentValuesScore);
+
+        db.close();
+    }
+
     public void insertData(int score, int highScore, int[][] box){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValuesScore = new ContentValues();

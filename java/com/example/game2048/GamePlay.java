@@ -20,7 +20,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     private TextView textScore, textHighScore;
 
     private int score = 0, highScore = 0, scorePrevious = 0;
-    private boolean won = false;
+    private boolean won = false, onDemo = false;
     private int[][] boxPrevious = new int[4][4];
     private int[][] box = new int[4][4];
 
@@ -59,7 +59,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onStop() {
         super.onStop();
-        db.insertData(score, highScore, box);
+        if(!onDemo) db.insertData(score, highScore, box);
     }
 
     private void connectView() {
@@ -95,7 +95,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void getScore(){
-        if(db.getScore() != null) {
+        if(db.getScore() != null && !onDemo) {
             score = db.getScore()[0];
             if(db.getScore()[1] < score) highScore = score;
             else highScore = db.getScore()[1];
@@ -103,8 +103,9 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     public void startGame() {
-        if(db.getBox() != null) {
-            getScore();
+        if(db.getBox() != null && !onDemo) {
+            score = db.getScore()[0];
+            highScore = db.getScore()[1];
             scorePrevious = score;
 
             box = db.getBox();
@@ -115,7 +116,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     public void resetGame() {
-        db.insertData(score, highScore, box);
+        if(!onDemo) db.insertHighScore(highScore);
         getScore();
         score = 0;
         scorePrevious = 0;
@@ -155,7 +156,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
                     setTextSize(box[i][j], i, j);
                 } else {
                     textView[i][j].setText("");
-                    textView[i][j].setTextColor(getResources().getColor(R.color.background_default));
+                    textView[i][j].setBackgroundResource(R.drawable.bg_num0);
                     textView[i][j].setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.box_size_small));
                 }
             }
@@ -182,49 +183,49 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void setColor(int n, int i, int j) {
-        switch (n) {
+        switch (n % 2048) {
             case 2: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num2));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num2);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num2));
             } break;
             case 4: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num4));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num4);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num4));
             } break;
             case 8: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num8));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num8);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num8));
             } break;
             case 16: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num16));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num16);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num16));
             } break;
             case 32: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num32));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num32);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num32));
             } break;
             case 64: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num64));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num64);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num64));
             } break;
             case 128: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num128));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num128);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num128));
             } break;
             case 256: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num256));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num256);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num256));
             } break;
             case 512: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num512));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num512);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num512));
             } break;
             case 1024: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num1024));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num1024);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num1024));
             } break;
             case 0: {
-                textView[i][j].setBackgroundColor(getResources().getColor(R.color.background_num2048));
+                textView[i][j].setBackgroundResource(R.drawable.bg_num2048);
                 textView[i][j].setTextColor(getResources().getColor(R.color.num2048));
             }
         }
@@ -476,6 +477,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void demoSwipe() {
+        onDemo = true;
         int[][] demo = new int[4][4];
         int i, j;
         for(i = 0; i < 4; i++){
@@ -495,6 +497,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void demoStuck(){
+        onDemo = true;
         int[][] demo = new int[4][4];
         int i, j;
         for(i = 0; i < 4; i++){
@@ -513,17 +516,13 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void demoEndGame() {
+        onDemo = true;
         int[][] demo = new int[4][4];
         int i, j;
         for(i = 0; i < 4; i++) {
             for(j = 0; j < 4; j++) {
-                if(i % 2 == 0) {
-                    if(j % 2 == 0) demo[i][j] = 2;
-                    else demo[i][j] = 4;
-                } else {
-                    if(j % 2 == 0) demo[i][j] = 4;
-                    else demo[i][j] = 2;
-                }
+                if((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) demo[i][j] = 2;
+                else demo[i][j] = 4;
             }
         }
 
@@ -534,6 +533,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void demoWinGame(){
+        onDemo = true;
         resetGame();
         box[3][3] = 2048;
 
@@ -541,11 +541,23 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void demoColorAndSize(){
-        resetGame();
+        onDemo = true;
+        box[0][0] = 0;
+        box[0][1] = 2;
+        box[0][2] = 4;
+        box[0][3] = 8;
+        box[1][0] = 16;
+        box[1][1] = 32;
+        box[1][2] = 64;
+        box[1][3] = 128;
+        box[2][0] = 256;
+        box[2][1] = 512;
+        box[2][2] = 1024;
+        box[2][3] = 2048;
+        box[3][2] = 4096;
+        box[3][1] = 262144;
+        box[3][2] = 2097152;
 
-        box[2][2] = 4096;
-        box[1][1] = 262144;
-        box[1][2] = 2097152;
         display();
     }
 
@@ -604,9 +616,11 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         if(v == undo) {
-            box = boxPrevious;
-            score = scorePrevious;
-            display();
+            if(!endGame()) {
+                box = boxPrevious;
+                score = scorePrevious;
+                display();
+            }
         }
 
         if(v == reset) {
@@ -615,7 +629,7 @@ public class GamePlay extends AppCompatActivity implements View.OnClickListener 
 
         if(v == home){
             Intent intent = new Intent(GamePlay.this, MainActivity.class);
-            db.insertData(score, highScore, box);
+            if(!onDemo) db.insertData(score, highScore, box);
             startActivity(intent);
         }
     }
